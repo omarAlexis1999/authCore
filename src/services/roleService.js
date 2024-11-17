@@ -7,7 +7,6 @@ exports.createRole = async (name) => {
         const role = await Rol.create({ name });
         return role;
     } catch (error) {
-        console.error('Error al crear el rol:', error);
         throw error;
     }
 };
@@ -23,7 +22,6 @@ exports.listRoles = async () => {
         });
         return roles;
     } catch (error) {
-        console.error('Error al listar los roles:', error);
         throw error;
     }
 };
@@ -60,7 +58,6 @@ exports.updateRole = async (id, roleData) => {
         await role.update(roleData);
         return role;
     } catch (error) {
-        console.error('Error al actualizar el rol:', error);
         throw error;
     }
 };
@@ -75,7 +72,6 @@ exports.deleteRole = async (id) => {
         await role.destroy();
         return true;
     } catch (error) {
-        console.error('Error al eliminar el rol:', error);
         throw error;
     }
 };
