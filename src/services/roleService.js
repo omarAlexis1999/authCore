@@ -4,8 +4,7 @@ const AppError = require('../utils/AppError')
 // Crear un nuevo rol
 exports.createRole = async (name) => {
     try {
-        const role = await Rol.create({ name });
-        return role;
+        return await Rol.create({name});
     } catch (error) {
         throw error;
     }
@@ -14,13 +13,12 @@ exports.createRole = async (name) => {
 // Listar todos los roles
 exports.listRoles = async () => {
     try {
-        const roles = await Rol.findAll({
+        return await Rol.findAll({
             where: {
                 deletedAt: null
             },
-            attributes: { exclude: ['deletedAt'] }
+            attributes: {exclude: ['deletedAt']}
         });
-        return roles;
     } catch (error) {
         throw error;
     }

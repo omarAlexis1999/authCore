@@ -27,12 +27,11 @@ exports.register = async (userData) => {
         // Encripta la contraseña
         const hashedPassword = bcrypt.hashSync(password, 10);
 
-        const user = await Usuario.create({
+        return await Usuario.create({
             ...userData, // Pasa las propiedades de userData
             password: hashedPassword, // Sobrescribe la propiedad password con la encriptada
             rol_id: rol.id, // Asigna el rol_id
         });
-        return user;
     } catch (error) {
         console
         throw error;
