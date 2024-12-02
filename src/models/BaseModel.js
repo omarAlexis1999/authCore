@@ -8,7 +8,7 @@ class BaseModel extends Model {
                 where: {
                     deletedAt: null,
                 },
-                attributes: { exclude: ['deletedAt'] },
+                attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt']},
             };
         }
         return super.init(attributes, options);
@@ -16,7 +16,9 @@ class BaseModel extends Model {
     // Metodo para excluir atributos sensibles o no deseados
     toSafeJSON() {
         const data = this.toJSON(); // Convierte el modelo a un objeto JSON
-        delete data.deletedAt; // Elimina el campo deletedAt
+        delete data.deletedAt; // Elimina el campo
+        delete data.updatedAt; // Elimina el campo
+        delete data.createdAt; // Elimina el campo
         return data; // Retorna el objeto sin deletedAt
     }
 }

@@ -1,4 +1,4 @@
-const { Usuario } = require('../models');
+const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const AppError = require('../utils/AppError')
@@ -6,8 +6,8 @@ require('dotenv').config()
 
 exports.login = async (email, password) => {
     try {
-        const user = await Usuario.findOne({
-            where: { email, deletedAt: null } // Solo usuarios activos
+        const user = await User.findOne({
+            where: { email } // Solo usuarios activos
         });
 
         // Verifica si el usuario existe y si la contraseña es válida

@@ -1,6 +1,18 @@
 'use strict';
+const BaseModel = require('./BaseModel');
+
 module.exports = (sequelize, DataTypes) => {
-    const Usuario = sequelize.define('Usuario', {
+
+    class User extends BaseModel {
+        static associate(models) {
+            User.belongsTo(models.Rol, {
+                foreignKey: 'rol_id',
+                as: 'rol',
+            });
+        }
+    }
+
+    User.init({
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4, // Genera un UUID automáticamente
@@ -52,17 +64,14 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
     }, {
+        sequelize,
         tableName: 'User',
         timestamps: true, // Habilita createdAt y updatedAt
         paranoid: true,   // Habilita deletedAt para la eliminación lógica
+        defaultScope: {
+            attributes: { exclude: ['password'] },
+        },
     });
 
-    Usuario.associate = (models) => {
-        Usuario.belongsTo(models.Rol, {
-            foreignKey: 'rol_id',
-            as: 'rol',
-        });
-    };
-
-    return Usuario;
+    return User;
 };

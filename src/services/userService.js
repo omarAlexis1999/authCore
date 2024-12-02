@@ -1,4 +1,4 @@
-const { Usuario , Rol } = require('../models');
+const { User , Rol } = require('../models');
 const bcrypt = require('bcrypt');
 const AppError = require('../utils/AppError')
 const {Op} = require('sequelize');
@@ -7,10 +7,9 @@ exports.register = async (userData) => {
     try {
         const { email, password } = userData;
 
-        const existingUser = await Usuario.findOne({
+        const existingUser = await User.findOne({
             where: {
-                email: email,
-                deletedAt: null // Busca registros activos, donde deletedAt está vacío
+                email: email
             }
         });
         if (existingUser) {
@@ -19,21 +18,21 @@ exports.register = async (userData) => {
 
         // Consulta para obtener el id del rol 'USER'
         const rol = await Rol.findOne({
-            where: { name: 'USER' , deletedAt: null} });
+            where: { name: 'USER'} });
         if (!rol) {
-            throw new AppError('No se puede asignar un rol al usuario', 404);
+            throw new AppError('No se puede asignar un rol al User', 404);
         }
 
         // Encripta la contraseña
         const hashedPassword = bcrypt.hashSync(password, 10);
 
-        return await Usuario.create({
+        const user=  await User.create({
             ...userData, // Pasa las propiedades de userData
             password: hashedPassword, // Sobrescribe la propiedad password con la encriptada
             rol_id: rol.id, // Asigna el rol_id
         });
+        return user.toSafeJSON();
     } catch (error) {
-        console
         throw error;
     }
 };
@@ -41,22 +40,17 @@ exports.register = async (userData) => {
 
 exports.editUser = async (id, userData) => {
     try {
-        const user = await Usuario.findByPk(id,{
-            where: {
-                deletedAt: null
-            },
-        });
+        const user = await User.findByPk(id);
         if (!user) {
-            throw new AppError('Usuario no encontrado', 404);
+            throw new AppError('User no encontrado', 404);
         }
 
-        // Verifica si el nuevo correo ya está en uso por otro usuario
+        // Verifica si el nuevo correo ya está en uso por otro User
         if (userData.email) {
-            const emailExists = await Usuario.findOne({
+            const emailExists = await User.findOne({
                 where: {
                     email: userData.email,
-                    id: { [Op.ne]: id }, // Excluye el usuario actual
-                    deletedAt: null, // Busca registros activos, donde deletedAt está vacío
+                    id: { [Op.ne]: id }, // Excluye el User actual
                 }
             });
             if (emailExists) {
@@ -69,9 +63,9 @@ exports.editUser = async (id, userData) => {
             delete userData.password;
         }
 
-        // Actualiza el usuario
-        await user.update(userData);
-        return user;
+        // Actualiza el User
+        const userUpdate = await user.update(userData);
+        return userUpdate.toSafeJSON();
 
     } catch (error) {
         throw error;
@@ -80,13 +74,9 @@ exports.editUser = async (id, userData) => {
 
 exports.deleteUser = async (id) => {
     try {
-        const user = await Usuario.findByPk(id,{
-            where: {
-                deletedAt: null
-            },
-        });
+        const user = await User.findByPk(id);
         if (!user) {
-            throw new AppError('Usuario no encontrado', 404);
+            throw new AppError('User no encontrado', 404);
         }
         await user.destroy();
         return true;
@@ -99,12 +89,9 @@ exports.listUsers = async (page = 1, limit = 10, sortField = 'createdAt', sortOr
     try {
         const offset = (page - 1) * limit;
 
-        // Obtiene los usuarios con paginación, orden y filtro de usuarios activos
-        const users = await Usuario.findAndCountAll({
-            where: {
-                deletedAt: null
-            },
-            attributes: { exclude: ['password','deletedAt','rol_id'] },
+        // Obtiene los Users con paginación, orden y filtro de Users activos
+        const users = await User.findAndCountAll({
+            attributes: { exclude: ['password','deletedAt','rol_id','createdAt', 'updatedAt'] },
             order: [[sortField, sortOrder]], // Ordena por el campo y orden especificado
             limit: limit,
             offset: offset
@@ -123,14 +110,11 @@ exports.listUsers = async (page = 1, limit = 10, sortField = 'createdAt', sortOr
 
 exports.getUserById = async (id) => {
     try {
-        const user = await Usuario.findByPk(id, {
-            where: {
-                deletedAt: null
-            },
-            attributes: { exclude: ['password','deletedAt','rol_id'] }
+        const user = await User.findByPk(id, {
+            attributes: { exclude: ['password','deletedAt','rol_id','createdAt', 'updatedAt'] }
         });
         if (!user) {
-            throw new AppError('El usuario no existe o ha sido eliminado.', 404);
+            throw new AppError('El User no existe o ha sido eliminado.', 404);
         }
         return user;
     }

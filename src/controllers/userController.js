@@ -5,7 +5,7 @@ const logger = require('../utils/logger');
 exports.register = async (req, res, next) => {
     try {
         const user = await userService.register(req.body);
-        const { deletedAt, password, rol_id,...userData } = user.toJSON();
+        const { password, rol_id,...userData } = user;
         // Responde con el usuario creado y un mensaje
         res.status(201).json({
             message: 'Usuario registrado exitosamente',
@@ -27,7 +27,7 @@ exports.editUser = async (req, res,next) => {
     const userData = req.body;
     try {
         const updatedUser = await userService.editUser(id, userData);
-        const { deletedAt, password, rol_id, ...updateUserData } = updatedUser.toJSON();
+        const { password, rol_id, ...updateUserData } = updatedUser;
         res.status(200).json({ message: 'Usuario actualizado exitosamente',...updateUserData});
         logger.info(`Usuario ${updatedUser.email} actualizado exitosamente`);
     } catch (error) {
@@ -58,14 +58,13 @@ exports.listUsers = async (req, res, next) => {
     const { page, limit, sortField, sortOrder } = req.query;
 
     try {
-        const result = await userService.listUsers(
+        const users = await userService.listUsers(
             parseInt(page) || 1,
             parseInt(limit) || 10,
             sortField || 'createdAt',
             sortOrder || 'ASC'
         );
-
-        res.status(200).json(result);
+        res.status(200).json(users);
         logger.info('Usuarios listados exitosamente');
     } catch (error) {
         logger.error(`Error al listar usuarios: ${error.message}`);

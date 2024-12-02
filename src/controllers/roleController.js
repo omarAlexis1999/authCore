@@ -6,8 +6,7 @@ exports.createRole = async (req, res, next) => {
     try {
         const { name } = req.body;
         const role = await roleService.createRole(name);
-        const { deletedAt, ...roleData } = role.toJSON();
-        res.status(201).json({ message: 'Rol creado exitosamente', ...roleData });
+        res.status(201).json({ message: 'Rol creado exitosamente', ...role });
         logger.info(`Rol ${name} creado exitosamente`);
         
     } catch (error) {
@@ -21,7 +20,13 @@ exports.createRole = async (req, res, next) => {
 
 exports.listRoles = async (req, res, next) => {
     try {
-        const roles = await roleService.listRoles();
+        const { page, limit, sortField, sortOrder } = req.query;
+        const roles = await roleService.listRoles(
+            parseInt(page) || 1,
+            parseInt(limit) || 10,
+            sortField || 'createdAt',
+            sortOrder || 'ASC'
+        );
         res.status(200).json(roles);
         logger.info('Roles listados exitosamente');
     } catch (error) {
@@ -53,8 +58,7 @@ exports.updateRole = async (req, res, next) => {
         const { id } = req.params;
         const roleData = req.body;
         const updatedRole = await roleService.updateRole(id, roleData);
-        const { deletedAt, ...UpdateRoleData } = updatedRole.toJSON();
-        res.status(200).json({ message: 'Rol actualizado exitosamente', ...UpdateRoleData });
+        res.status(200).json({ message: 'Rol actualizado exitosamente', ...updatedRole });
         logger.info(`Rol ${updatedRole.name} actualizado exitosamente`);
     } catch (error) {
         logger.error(`Error al actualizar el rol: ${error.message}`);
