@@ -16,7 +16,7 @@ jobs:
       DB_PORT: ${{ secrets.DB_PORT }}
       NODE_ENV: ${{ secrets.NODE_ENV }}
 
-    environment: dev
+    environment: DEV
 
     steps:
       - name: Checkout Code
