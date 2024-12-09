@@ -60,4 +60,5 @@ jobs:
                        DB_USER=${{ secrets.DB_USER }} \
                        DB_NAME=${{ vars.DB_NAME }} \
                        DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-                       NODE_ENV=${{ vars.NODE_ENV }}
+                       NODE_ENV=${{ vars.NODE_ENV }} \
+                       JWT_SECRET=${{ secrets.JWT_SECRET }}
