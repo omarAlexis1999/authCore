@@ -20,6 +20,11 @@ jobs:
         with:
           node-version: ${{ vars.NODE_VERSION }}
 
+      - name: 'Azure Login'
+        uses: Azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: 'Resolve Project Dependencies Using Npm'
         shell: bash
         run: |
