@@ -13,25 +13,25 @@ jobs:
 
     env:
       DB_USER: ${{ secrets.DB_USER }}
-      DB_HOST: ${{ env.DB_HOST }}
+      DB_HOST: ${{ vars.DB_HOST }}
       DB_NAME: ${{ secrets.DB_NAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_PORT: ${{ env.DB_PORT }}
-      NODE_ENV: ${{ env.NODE_ENV }}
+      DB_PORT: ${{ vars.DB_PORT }}
+      NODE_ENV: ${{ vars.NODE_ENV }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      - name: Setup Node ${{ vars.NODE_VERSION }} Environment
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
 
       - name: 'Resolve Project Dependencies Using Npm'
         shell: bash
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pushd './${{ vars.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
           npm run build --if-present
           popd
@@ -40,6 +40,6 @@ jobs:
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ vars.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
