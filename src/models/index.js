@@ -18,6 +18,12 @@ const sequelize = new Sequelize(
       port: process.env.DB_PORT || 5432, // Puerto, por defecto 5432 si no se define
       dialect: 'postgres', // Dialecto de la base de datos
       logging: false, // Desactiva el registro de consultas, opcional
+      dialectOptions: {
+         ssl: {
+              require: true,
+              rejectUnauthorized: false, // Cambia a true si tienes un certificado válido
+         },
+      },
     }
 );
 
